@@ -30,13 +30,7 @@ git ls-remote https://github.com/anki7peng-png/dsh-luoxiaohei-skins.git
 3. 安装完成后重启 DSH。
 4. 插件页 →「罗小黑系列皮肤」→ 选择「小黑·森林」。
 
-如果插件页的安装器没有用上 Git 凭据，可在 PowerShell 用 CLI 方式：
-
-```powershell
-dsh plugin --profile desktop add github:anki7peng-png/dsh-luoxiaohei-skins
-```
-
-然后重启 DSH。若安装器仍要求公开仓库，请告诉我，我再给一个不依赖私有 Git 凭据的本地安装脚本。
+如果插件页安装器没有用上 Git 凭据，先回到第 1 步确认 `git ls-remote` 能成功；若仍失败，请把 DSH 的报错发我，我再给本地路径安装方式。注意：`dsh plugin --profile desktop add ...` 只安装依赖，不会自动把 bundle 注册进 profile，不建议单独使用。
 
 ## 3. 验收点
 
