@@ -9,7 +9,7 @@
 
 ## 视觉概要
 
-- **背景**：3200×2000 动画森林背景，直接取自第 41 集 `00:01:57.042` 的林下树影帧；16:10 裁切、去除右上角源内哔哩哔哩标识、压暗调色并加暗角。巨木、横枝、山野和蝉保留原片手绘质感。
+- **背景**：3200×2000 动画森林背景，直接取自第 41 集 `00:01:57.042` 的林下树影帧；16:10 裁切、去除右上角源内哔哩哔哩标识、压暗调色并加暗角。巨木、横枝、山野和蝉保留原片手绘质感。Windows 端另用更亮的 `background-win.webp`（仅检测到 Windows 时切换），macOS 继续用原图。
 - **角色**：小黑本体直接裁自 `角色卡/罗小黑/原形_官方设定图.png`，保留原图的奶油色眼白、黑瞳、绿耳与长尾；四态共用这一官方坐姿，分别叠加符文笏板（`working`）、琥珀问询符（`waiting`）、叶片“z”（`idle`）和下半身雾化（`unknown`）。600×660 RGBA WebP；状态靠道具/雾化区分。完整图悬浮在输入栏右侧、状态行右端，不占输入区高度。
 - **界面**：深松墨绿玻璃层、苔玉描边、月金字色；`body::before` 氛围叠层 + `body::after` 轻颗粒/内框；角色有浮动/呼吸动效，等待时在会话标题旁显示 34px 琥珀描边头像。所有动效尊重 `prefers-reduced-motion`。
 - 完整设定、色板、构图与资产清单见 [`docs/视觉设定-小黑森林.md`](docs/视觉设定-小黑森林.md)。
@@ -22,12 +22,14 @@
 - **眼睛跟随**：仅当前页面可见/前台时，悬浮版小黑的瞳孔跟随鼠标方向偏移（最大约 3px）；失焦或切到后台回中。`unknown` 和标题小头像保持静态；没有头部/身体追踪。
 - **按钮微动效**：主题激活时按钮有 hover 上浮、按下回弹、苔玉色 focus 环和更平滑的状态过渡；等待态小头像有低频琥珀呼吸。
 - **范围限制**：耳语提示跟随当前打开的会话，不是全局通知中心；没有声音/系统通知，也没有接管 DSH 的审批、停止或发送按钮——这些仍由 DSH 原生逻辑处理。所有动效遵守 `prefers-reduced-motion`。
+- **菜单覆盖**：Web 的账号菜单（设置/意见反馈/退出登录）会继承主题 token；Windows 桌面壳左下角的原生菜单（设置/意见反馈/登录）不在 Web DOM 内，本插件不覆盖，留给桌面壳代码处理。
 
 ## 资源结构
 
 ```
 assets/visuals.json                    # 六套主题与 token
-assets/xiaohei-forest/background.webp  # 3200×2000 RGB
+assets/xiaohei-forest/background.webp      # macOS/默认
+assets/xiaohei-forest/background-win.webp  # Windows 提亮版
 assets/xiaohei-forest/{working,waiting,idle,unknown}.webp
 assets/xiaohei-forest/{working,waiting,idle}-gaze.webp  # 去瞳跟随版
 assets/xiaohei-forest/来源与授权.md
@@ -70,6 +72,8 @@ test/                                  # 资源路由与客户端映射测试
 - 状态提示实测：`waiting` 出现「小黑在等你回应」，`working → idle` 出现「本轮结束 · 小黑收工」；按钮 hover/press/focus 样式与 `prefers-reduced-motion` 已加入，`npm test` 里对提示与按钮 CSS 有断言。
 - 布局实测：悬浮小黑不参与 composer 高度；输入卡片 98px、dock 26px、`composerStack` 128px，输入栏和状态行保持贴底。
 - 眼睛跟随实测：`pointermove` 后瞳孔 `--gaze-x/--gaze-y` 偏移；`blur` / `visibilitychange` 回中。gaze 资源由资源服务和单元测试覆盖。
+- Windows 背景补偿实测：在 macOS 预览里手动设置 `data-dsh-luoxiaohei-platform="win32"`，背景切换为 `background-win.webp` 且遮罩减淡；未设置时仍使用原 `background.webp`，macOS 显示不变。
+- Windows 原生菜单：Mac Web 的账号菜单是深色主题；Windows 截图中左下角菜单为浅色，判断为桌面壳原生菜单，不在 Web 皮肤覆盖范围，未修改。
 
 截图：[欢迎页](docs/screenshots/01-欢迎页.jpg) · [主题选择](docs/screenshots/02-主题选择.jpg) · [执行态](docs/screenshots/03-执行态.jpg) · [等待态](docs/screenshots/04-等待态.jpg) · [空闲态](docs/screenshots/05-空闲态.jpg) · [等待提示](docs/screenshots/06-状态提示-等待.jpg) · [收工提示](docs/screenshots/07-状态提示-收工.jpg) · [眼睛跟随](docs/screenshots/08-眼睛跟随.jpg)
 

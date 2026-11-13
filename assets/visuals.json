@@ -96,7 +96,8 @@
         "working": "working-gaze.webp",
         "waiting": "waiting-gaze.webp",
         "idle": "idle-gaze.webp"
-      }
+      },
+      "backgroundWindows": "background-win.webp"
     },
     {
       "id": "wuxian-landscape",
