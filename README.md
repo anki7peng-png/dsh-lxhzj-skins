@@ -72,13 +72,13 @@ test/                                  # 资源路由与客户端映射测试
 - 状态提示实测：`waiting` 出现「小黑在等你回应」，`working → idle` 出现「本轮结束 · 小黑收工」；按钮 hover/press/focus 样式与 `prefers-reduced-motion` 已加入，`npm test` 里对提示与按钮 CSS 有断言。
 - 布局实测：悬浮小黑不参与 composer 高度；输入卡片 98px、dock 26px、`composerStack` 128px，输入栏和状态行保持贴底。
 - 眼睛跟随实测：`pointermove` 后瞳孔 `--gaze-x/--gaze-y` 偏移；`blur` / `visibilitychange` 回中。gaze 资源由资源服务和单元测试覆盖。
-- Windows 背景补偿实测：资源服务对 Windows UA 的 `background.webp` 请求回退到提亮版；完整图 caption 在 Windows 上带临时 `W4` 标记，用于确认新客户端是否生效。
+- Windows 背景补偿实测：资源服务对 Windows UA 的 `background.webp` 请求回退到提亮版；Windows 额外叠加 `mix-blend-mode: screen` 提亮层；完整图 caption 带临时 `W5` 标记，用于确认新客户端是否生效。
 - macOS 预览里手动设置 `data-dsh-luoxiaohei-platform="win32"`，背景切换为 `background-win.webp` 且遮罩减淡；未设置时仍使用原 `background.webp`，macOS 显示不变。
 - Windows 原生菜单：Mac Web 的账号菜单是深色主题；Windows 截图中左下角菜单为浅色，判断为桌面壳原生菜单，不在 Web 皮肤覆盖范围，未修改。
 
 截图：[欢迎页](docs/screenshots/01-欢迎页.jpg) · [主题选择](docs/screenshots/02-主题选择.jpg) · [执行态](docs/screenshots/03-执行态.jpg) · [等待态](docs/screenshots/04-等待态.jpg) · [空闲态](docs/screenshots/05-空闲态.jpg) · [等待提示](docs/screenshots/06-状态提示-等待.jpg) · [收工提示](docs/screenshots/07-状态提示-收工.jpg) · [眼睛跟随](docs/screenshots/08-眼睛跟随.jpg)
 
-**尚未实测**：macOS 桌面端（当前桌面 profile 未安装本插件）、Windows 桌面端、GitHub 安装后的 Windows 运行、高 DPI/多显示器。GitHub public 安装在 macOS 隔离 Web 已验证（0.1.4）。详见 [`docs/验证记录.md`](docs/验证记录.md)。
+**尚未实测**：macOS 桌面端（当前桌面 profile 未安装本插件）、Windows 桌面端、GitHub 安装后的 Windows 运行、高 DPI/多显示器。GitHub public 安装在 macOS 隔离 Web 已验证（0.1.5）。详见 [`docs/验证记录.md`](docs/验证记录.md)。
 
 ## 素材来源与限制
 
