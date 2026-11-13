@@ -22,7 +22,7 @@
 - **眼睛跟随**：仅当前页面可见/前台时，悬浮版小黑的瞳孔跟随鼠标方向偏移（最大约 3px）；失焦或切到后台回中。`unknown` 和标题小头像保持静态；没有头部/身体追踪。
 - **按钮微动效**：主题激活时按钮有 hover 上浮、按下回弹、苔玉色 focus 环和更平滑的状态过渡；等待态小头像有低频琥珀呼吸。
 - **范围限制**：耳语提示跟随当前打开的会话，不是全局通知中心；没有声音/系统通知，也没有接管 DSH 的审批、停止或发送按钮——这些仍由 DSH 原生逻辑处理。所有动效遵守 `prefers-reduced-motion`。
-- **菜单覆盖**：Web 的账号菜单（设置/意见反馈/退出登录）会继承主题 token；Windows 桌面壳左下角的原生菜单（设置/意见反馈/登录）不在 Web DOM 内，本插件不覆盖，留给桌面壳代码处理。
+- **菜单覆盖**：小黑·森林主题为 DSH 界面菜单补充森林色背景及图标颜色，包括左下角的设置、意见反馈和登录菜单；菜单操作仍由 DSH 处理。
 
 ## 资源结构
 
@@ -72,9 +72,8 @@ test/                                  # 资源路由与客户端映射测试
 - 状态提示实测：`waiting` 出现「小黑在等你回应」，`working → idle` 出现「本轮结束 · 小黑收工」；按钮 hover/press/focus 样式与 `prefers-reduced-motion` 已加入，`npm test` 里对提示与按钮 CSS 有断言。
 - 布局实测：悬浮小黑不参与 composer 高度；输入卡片 98px、dock 26px、`composerStack` 128px，输入栏和状态行保持贴底。
 - 眼睛跟随实测：`pointermove` 后瞳孔 `--gaze-x/--gaze-y` 偏移；`blur` / `visibilitychange` 回中。gaze 资源由资源服务和单元测试覆盖。
-- Windows 背景补偿实测：资源服务对 Windows UA 的 `background.webp` 请求回退到提亮版；Windows 额外叠加内联 `mix-blend-mode: screen` 提亮层；W8 在 Windows 上临时显示诊断面板，用于定位遮挡层。
-- Windows 根因：W8 诊断面板定位到桌面壳 `.mP3x-q_frame` 的 `rgba(5, 14, 10, 0.86)` 填充；0.1.9 在 Windows 下将该 frame 透明化，基础 `background.webp` 直接显示，macOS 路径不变。
-- Windows 原生菜单：Mac Web 的账号菜单是深色主题；Windows 截图中左下角菜单为浅色，判断为桌面壳原生菜单，不在 Web 皮肤覆盖范围，未修改。
+- Windows 背景根因：W8 诊断面板定位到桌面壳 `.mP3x-q_frame` 的 `rgba(5, 14, 10, 0.86)` 填充；0.1.9 在 Windows 下将该 frame 透明化，基础 `background.webp` 直接显示，macOS 路径不变。
+- 账号菜单：小黑·森林主题为 DSH 账号菜单补充森林色表面和图标色；菜单操作仍由 DSH 处理。
 
 截图：[欢迎页](docs/screenshots/01-欢迎页.jpg) · [主题选择](docs/screenshots/02-主题选择.jpg) · [执行态](docs/screenshots/03-执行态.jpg) · [等待态](docs/screenshots/04-等待态.jpg) · [空闲态](docs/screenshots/05-空闲态.jpg) · [等待提示](docs/screenshots/06-状态提示-等待.jpg) · [收工提示](docs/screenshots/07-状态提示-收工.jpg) · [眼睛跟随](docs/screenshots/08-眼睛跟随.jpg)
 
