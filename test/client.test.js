@@ -61,7 +61,6 @@ test('selects independent skins through the DSH form and restores the default', 
   assert.equal(instance.form.getSnapshot().value.selectedSkin, 'forest')
   assert.equal(instance.attrs.get('data-dsh-luoxiaohei-skin'), 'forest')
   assert.match(instance.styles[0].textContent, /forest\/forest\.png/)
-  assert.match(instance.styles[0].textContent, /forest-win\.png/)
   assert.match(instance.styles[0].textContent, /data-dsh-luoxiaohei-platform/)
   assert.match(instance.styles[0].textContent, /luoxiaohei-whisper/)
   assert.match(instance.styles[0].textContent, /translateY\(-1px\)/)

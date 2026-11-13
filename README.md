@@ -9,7 +9,7 @@
 
 ## 视觉概要
 
-- **背景**：3200×2000 动画森林背景，直接取自第 41 集 `00:01:57.042` 的林下树影帧；16:10 裁切、去除右上角源内哔哩哔哩标识、压暗调色并加暗角。巨木、横枝、山野和蝉保留原片手绘质感。Windows 端另用更亮的 `background-win.webp`（仅检测到 Windows 时切换），macOS 继续用原图。
+- **背景**：3200×2000 动画森林背景，直接取自第 41 集 `00:01:57.042` 的林下树影帧；16:10 裁切、去除右上角源内哔哩哔哩标识、压暗调色并加暗角。巨木、横枝、山野和蝉保留原片手绘质感。Windows 端的问题是桌面壳 `.mP3x-q_frame` 有一层 86% 深色填充；0.1.9 在 Windows 下把这个 frame 透明化，直接露出基础背景。`background-win.webp` 保留为备用素材。
 - **角色**：小黑本体直接裁自 `角色卡/罗小黑/原形_官方设定图.png`，保留原图的奶油色眼白、黑瞳、绿耳与长尾；四态共用这一官方坐姿，分别叠加符文笏板（`working`）、琥珀问询符（`waiting`）、叶片“z”（`idle`）和下半身雾化（`unknown`）。600×660 RGBA WebP；状态靠道具/雾化区分。完整图悬浮在输入栏右侧、状态行右端，不占输入区高度。
 - **界面**：深松墨绿玻璃层、苔玉描边、月金字色；`body::before` 氛围叠层 + `body::after` 轻颗粒/内框；角色有浮动/呼吸动效，等待时在会话标题旁显示 34px 琥珀描边头像。所有动效尊重 `prefers-reduced-motion`。
 - 完整设定、色板、构图与资产清单见 [`docs/视觉设定-小黑森林.md`](docs/视觉设定-小黑森林.md)。
@@ -29,7 +29,7 @@
 ```
 assets/visuals.json                    # 六套主题与 token
 assets/xiaohei-forest/background.webp      # macOS/默认
-assets/xiaohei-forest/background-win.webp  # Windows 提亮版
+assets/xiaohei-forest/background-win.webp  # Windows 备用提亮版
 assets/xiaohei-forest/{working,waiting,idle,unknown}.webp
 assets/xiaohei-forest/{working,waiting,idle}-gaze.webp  # 去瞳跟随版
 assets/xiaohei-forest/来源与授权.md
@@ -73,12 +73,12 @@ test/                                  # 资源路由与客户端映射测试
 - 布局实测：悬浮小黑不参与 composer 高度；输入卡片 98px、dock 26px、`composerStack` 128px，输入栏和状态行保持贴底。
 - 眼睛跟随实测：`pointermove` 后瞳孔 `--gaze-x/--gaze-y` 偏移；`blur` / `visibilitychange` 回中。gaze 资源由资源服务和单元测试覆盖。
 - Windows 背景补偿实测：资源服务对 Windows UA 的 `background.webp` 请求回退到提亮版；Windows 额外叠加内联 `mix-blend-mode: screen` 提亮层；W8 在 Windows 上临时显示诊断面板，用于定位遮挡层。
-- macOS 预览里手动设置 `data-dsh-luoxiaohei-platform="win32"`，背景切换为 `background-win.webp` 且遮罩减淡；未设置时仍使用原 `background.webp`，macOS 显示不变。
+- Windows 根因：W8 诊断面板定位到桌面壳 `.mP3x-q_frame` 的 `rgba(5, 14, 10, 0.86)` 填充；0.1.9 在 Windows 下将该 frame 透明化，基础 `background.webp` 直接显示，macOS 路径不变。
 - Windows 原生菜单：Mac Web 的账号菜单是深色主题；Windows 截图中左下角菜单为浅色，判断为桌面壳原生菜单，不在 Web 皮肤覆盖范围，未修改。
 
 截图：[欢迎页](docs/screenshots/01-欢迎页.jpg) · [主题选择](docs/screenshots/02-主题选择.jpg) · [执行态](docs/screenshots/03-执行态.jpg) · [等待态](docs/screenshots/04-等待态.jpg) · [空闲态](docs/screenshots/05-空闲态.jpg) · [等待提示](docs/screenshots/06-状态提示-等待.jpg) · [收工提示](docs/screenshots/07-状态提示-收工.jpg) · [眼睛跟随](docs/screenshots/08-眼睛跟随.jpg)
 
-**尚未实测**：macOS 桌面端（当前桌面 profile 未安装本插件）、Windows 桌面端、GitHub 安装后的 Windows 运行、高 DPI/多显示器。GitHub public 安装在 macOS 隔离 Web 已验证（0.1.8）。详见 [`docs/验证记录.md`](docs/验证记录.md)。
+**尚未实测**：macOS 桌面端（当前桌面 profile 未安装本插件）、Windows 桌面端、GitHub 安装后的 Windows 运行、高 DPI/多显示器。GitHub public 安装在 macOS 隔离 Web 已验证（0.1.9）。详见 [`docs/验证记录.md`](docs/验证记录.md)。
 
 ## 素材来源与限制
 
