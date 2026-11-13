@@ -49,5 +49,5 @@ dsh plugin --profile desktop add github:anki7peng-png/dsh-luoxiaohei-skins
 ## 4. 已知风险
 
 - 悬浮定位依赖 DSH 0.2.2 的 composer CSS 模块类 `_composerStack`。如果 Windows 端 DSH 版本不同，小黑可能退回普通布局；请记录 DSH 版本。
-- Windows 桌面端尚未实测；macOS 隔离 Web 已验证。
+- Windows 桌面端尚未实测；macOS 隔离 Web 已验证。GitHub spec（`github:anki7peng-png/dsh-luoxiaohei-skins`）在 macOS 隔离 profile 安装成功，可作为 Windows 安装的参考。
 - 仓库为 private；不要改为 public，除非先替换掉官方/影视帧派生素材。
