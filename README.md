@@ -73,11 +73,11 @@ test/                                  # 资源路由与客户端映射测试
 - 布局实测：悬浮小黑不参与 composer 高度；输入卡片 98px、dock 26px、`composerStack` 128px，输入栏和状态行保持贴底。
 - 眼睛跟随实测：`pointermove` 后瞳孔 `--gaze-x/--gaze-y` 偏移；`blur` / `visibilitychange` 回中。gaze 资源由资源服务和单元测试覆盖。
 - Windows 背景根因：W8 诊断面板定位到桌面壳 `.mP3x-q_frame` 的 `rgba(5, 14, 10, 0.86)` 填充；0.1.9 在 Windows 下将该 frame 透明化，基础 `background.webp` 直接显示，macOS 路径不变。
-- 账号菜单：小黑·森林主题为 DSH 账号菜单补充森林色表面和图标色；菜单操作仍由 DSH 处理。
+- 账号菜单：小黑·森林主题为 DSH 账号菜单补充森林色表面和图标色；菜单背景 `rgba(9, 21, 15, 0.96)`、图标 `#dbe9dd`，设置入口可正常打开；菜单操作仍由 DSH 处理。
 
-截图：[欢迎页](docs/screenshots/01-欢迎页.jpg) · [主题选择](docs/screenshots/02-主题选择.jpg) · [执行态](docs/screenshots/03-执行态.jpg) · [等待态](docs/screenshots/04-等待态.jpg) · [空闲态](docs/screenshots/05-空闲态.jpg) · [等待提示](docs/screenshots/06-状态提示-等待.jpg) · [收工提示](docs/screenshots/07-状态提示-收工.jpg) · [眼睛跟随](docs/screenshots/08-眼睛跟随.jpg)
+截图：[欢迎页](docs/screenshots/01-欢迎页.jpg) · [主题选择](docs/screenshots/02-主题选择.jpg) · [执行态](docs/screenshots/03-执行态.jpg) · [等待态](docs/screenshots/04-等待态.jpg) · [空闲态](docs/screenshots/05-空闲态.jpg) · [等待提示](docs/screenshots/06-状态提示-等待.jpg) · [收工提示](docs/screenshots/07-状态提示-收工.jpg) · [眼睛跟随](docs/screenshots/08-眼睛跟随.jpg) · [菜单森林色](docs/screenshots/09-菜单森林色.jpg)
 
-**尚未实测**：macOS 桌面端（当前桌面 profile 未安装本插件）、Windows 桌面端、GitHub 安装后的 Windows 运行、高 DPI/多显示器。GitHub public 安装在 macOS 隔离 Web 已验证（0.1.9）。详见 [`docs/验证记录.md`](docs/验证记录.md)。
+**尚未实测**：macOS 桌面端（当前桌面 profile 未安装本插件）、Windows 桌面端、菜单分支的 Windows 运行、高 DPI/多显示器。GitHub public 主分支安装已在 macOS 隔离 Web 验证（0.1.9）；菜单分支 0.1.10 在 `skinmenu` profile 验证。详见 [`docs/验证记录.md`](docs/验证记录.md)。
 
 ## 素材来源与限制
 
