@@ -12,14 +12,13 @@ function response() {
 
 test('validates theme ids, configured image names and semantic colors', () => {
   const normalized = normalizeVisuals({ themes: [
-    { id: 'forest', name: '森林', tagline: ' 月下巡林 ', accent: '#93E7B3', theme: { colorScheme: 'dark', tokens: { '--dsw-alias-bg-base': '#123', '--other': 'red' } }, background: '../secret.png', backgroundNoCicada: 'clean.webp', cicadaAnimated: 'cicada.webp', backgroundWindows: 'win.png', character: { working: 'working.png', idle: 'https://elsewhere/x.png' }, gaze: { working: 'gaze.png', unknown: '../bad.png' } },
+    { id: 'forest', name: '森林', tagline: ' 月下巡林 ', accent: '#93E7B3', theme: { colorScheme: 'dark', tokens: { '--dsw-alias-bg-base': '#123', '--other': 'red' } }, background: '../secret.png', cicadaAnimated: 'cicada.webp', backgroundWindows: 'win.png', character: { working: 'working.png', idle: 'https://elsewhere/x.png' }, gaze: { working: 'gaze.png', unknown: '../bad.png' } },
     { id: '../bad', name: 'bad' }, { id: 'forest', name: 'duplicate' }
   ] })
   assert.equal(normalized.themes.length, 1)
   const skin = normalized.themes[0]
   assert.equal(skin.background, null)
   assert.equal(skin.backgroundWindows, 'win.png')
-  assert.equal(skin.backgroundNoCicada, 'clean.webp')
   assert.equal(skin.cicadaAnimated, 'cicada.webp')
   assert.equal(skin.character.working, 'working.png')
   assert.equal(skin.character.idle, null)
@@ -48,7 +47,6 @@ test('ships and serves the complete 小黑·森林 visual set', async () => {
   assert.equal(forest.gaze.unknown, null)
   assert.ok((await stat(new URL('../assets/xiaohei-forest/background.webp', import.meta.url))).size > 100_000)
   assert.ok((await stat(new URL('../assets/xiaohei-forest/background-win.webp', import.meta.url))).size > 100_000)
-  assert.ok((await stat(new URL('../assets/xiaohei-forest/background-no-cicada.webp', import.meta.url))).size > 100_000)
   assert.ok((await stat(new URL('../assets/xiaohei-forest/cicada-animated.webp', import.meta.url))).size > 10_000)
   for (const state of ['working', 'waiting', 'idle', 'unknown']) {
     assert.ok((await stat(new URL(`../assets/xiaohei-forest/${state}.webp`, import.meta.url))).size > 10_000)
