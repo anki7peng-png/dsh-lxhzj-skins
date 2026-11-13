@@ -84,4 +84,6 @@ test/                                  # 资源路由与客户端映射测试
 
 按项目所有者确认，本皮肤为**完全自用**：背景直接使用第 41 集影视帧（裁切、去源内水印、调色），角色本体直接使用官方原形设定图裁切，状态道具/雾化为后加。公开可见不代表授权第三方商用或再分发；不商用、不冒充官方。角色与作品版权归 MTJJ 木头 / 寒木春华 / 版权方。旧壁纸、角色设定和影视帧原件均保持原文件与来源。
 
+Windows 背景踩坑与定位方法见 [`docs/Windows踩坑.md`](docs/Windows踩坑.md)。
+
 来源与授权详见 [`assets/xiaohei-forest/来源与授权.md`](assets/xiaohei-forest/来源与授权.md) 和上级目录 `素材/来源与版权说明.md`。代码分层参考 [dsh-deep-whale](https://github.com/Small-tailqwq/dsh-deep-whale)，MIT 许可见 `THIRD_PARTY_NOTICES.md`。
