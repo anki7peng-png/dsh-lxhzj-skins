@@ -43,7 +43,7 @@ async function mount(themes, initial = 'default') {
   }
 }
 
-const forest = { id: 'forest', name: '森林', available: true, background: 'forest.png', backgroundAnimated: 'forest-anim.webp', backgroundWindows: 'forest-win.png', theme: null, character: { working: 'work.png', waiting: 'wait.png', idle: 'idle.png', unknown: null }, gaze: { working: 'work-gaze.png', waiting: 'wait-gaze.png', idle: 'idle-gaze.png', unknown: null } }
+const forest = { id: 'forest', name: '森林', available: true, background: 'forest.png', backgroundNoCicada: 'forest-clean.webp', cicadaAnimated: 'cicada.webp', backgroundWindows: 'forest-win.png', theme: null, character: { working: 'work.png', waiting: 'wait.png', idle: 'idle.png', unknown: null }, gaze: { working: 'work-gaze.png', waiting: 'wait-gaze.png', idle: 'idle-gaze.png', unknown: null } }
 const mountain = { id: 'mountain', name: '山水', available: true, background: 'mountain.png', theme: { colorScheme: 'dark', tokens: { '--dsw-alias-bg-base': 'transparent' } }, character: {} }
 const future = { id: 'future', name: '待制作', available: false, background: null, theme: null, character: {} }
 const buttons = instance => instance.components['plugins.bundle.config']().children[5].children
@@ -60,7 +60,8 @@ test('selects independent skins through the DSH form and restores the default', 
   await new Promise(resolve => setImmediate(resolve))
   assert.equal(instance.form.getSnapshot().value.selectedSkin, 'forest')
   assert.equal(instance.attrs.get('data-dsh-luoxiaohei-skin'), 'forest')
-  assert.match(instance.styles[0].textContent, /forest\/forest\.png/)
+  assert.match(instance.styles[0].textContent, /forest-clean\.webp/)
+  assert.match(instance.styles[0].textContent, /luoxiaohei-cicada-overlay/)
   assert.match(instance.styles[0].textContent, /data-dsh-luoxiaohei-platform/)
   assert.match(instance.styles[0].textContent, /role="menu"\]\[data-menu-material="translucent"\]/)
   assert.match(instance.styles[0].textContent, /--dsw-menu-surface-fill: rgba\(9, 21, 15, 0\.96\)/)

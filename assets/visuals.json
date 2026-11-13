@@ -98,7 +98,8 @@
         "idle": "idle-gaze.webp"
       },
       "backgroundWindows": "background-win.webp",
-      "backgroundAnimated": "background-animated.webp"
+      "backgroundNoCicada": "background-no-cicada.webp",
+      "cicadaAnimated": "cicada-animated.webp"
     },
     {
       "id": "wuxian-landscape",
