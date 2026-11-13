@@ -41,12 +41,12 @@ test/                                  # 资源路由与客户端映射测试
 
 ## 安装
 
-仓库（private）：<https://github.com/anki7peng-png/dsh-luoxiaohei-skins>
+仓库（public）：<https://github.com/anki7peng-png/dsh-lxhzj-skins>
 
 - **DSH 插件页**：「插件」→「添加插件」→ 输入上面的 GitHub 地址 → 重启 DSH → 在「罗小黑系列皮肤」中选择主题。
-- **Windows**：见 [`docs/Windows安装.md`](docs/Windows安装.md)（需要先 `gh auth login` / `gh auth setup-git`，因为仓库是 private）。
+- **Windows**：见 [`docs/Windows安装.md`](docs/Windows安装.md)（public 仓库，不需要 `gh auth login`）。
 - **本地开发**：`npm install && npm test`。
-- 仓库保持 private：内含官方角色裁切与影视帧派生素材，按项目所有者确认仅作完全自用，不对外分发。
+- 仓库已设为 public，内含官方角色裁切与影视帧派生素材；公开仅用于项目所有者跨设备试用与备份，不构成对第三方的商用/再分发授权。
 
 ## 切换与状态
 
@@ -74,6 +74,6 @@ test/                                  # 资源路由与客户端映射测试
 
 ## 素材来源与限制
 
-按项目所有者确认，本皮肤为**完全自用**：背景直接使用第 41 集影视帧（裁切、去源内水印、调色），角色本体直接使用官方原形设定图裁切，状态道具/雾化为后加。素材不对外分发、不商用、不冒充官方；角色与作品版权归 MTJJ 木头 / 寒木春华 / 版权方。旧壁纸、角色设定和影视帧原件均保持原文件与来源。
+按项目所有者确认，本皮肤为**完全自用**：背景直接使用第 41 集影视帧（裁切、去源内水印、调色），角色本体直接使用官方原形设定图裁切，状态道具/雾化为后加。公开可见不代表授权第三方商用或再分发；不商用、不冒充官方。角色与作品版权归 MTJJ 木头 / 寒木春华 / 版权方。旧壁纸、角色设定和影视帧原件均保持原文件与来源。
 
 来源与授权详见 [`assets/xiaohei-forest/来源与授权.md`](assets/xiaohei-forest/来源与授权.md) 和上级目录 `素材/来源与版权说明.md`。代码分层参考 [dsh-deep-whale](https://github.com/Small-tailqwq/dsh-deep-whale)，MIT 许可见 `THIRD_PARTY_NOTICES.md`。
