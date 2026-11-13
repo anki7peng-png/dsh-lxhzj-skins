@@ -77,7 +77,7 @@ test/                                  # 资源路由与客户端映射测试
 
 截图：[欢迎页](docs/screenshots/01-欢迎页.jpg) · [主题选择](docs/screenshots/02-主题选择.jpg) · [执行态](docs/screenshots/03-执行态.jpg) · [等待态](docs/screenshots/04-等待态.jpg) · [空闲态](docs/screenshots/05-空闲态.jpg) · [等待提示](docs/screenshots/06-状态提示-等待.jpg) · [收工提示](docs/screenshots/07-状态提示-收工.jpg) · [眼睛跟随](docs/screenshots/08-眼睛跟随.jpg)
 
-**尚未实测**：macOS 桌面端（当前桌面 profile 未安装本插件）、Windows 桌面端、GitHub 安装后的 Windows 运行、高 DPI/多显示器。GitHub 安装在 macOS 隔离 Web 已验证。详见 [`docs/验证记录.md`](docs/验证记录.md)。
+**尚未实测**：macOS 桌面端（当前桌面 profile 未安装本插件）、Windows 桌面端、GitHub 安装后的 Windows 运行、高 DPI/多显示器。GitHub public 安装在 macOS 隔离 Web 已验证（0.1.1）。详见 [`docs/验证记录.md`](docs/验证记录.md)。
 
 ## 素材来源与限制
 
