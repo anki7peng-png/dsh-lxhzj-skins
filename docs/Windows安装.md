@@ -9,8 +9,10 @@
 ## 1. 在 DSH 中安装
 
 1. 打开 DSH →「插件」→「添加插件」。
-2. 输入仓库地址：
+2. 输入仓库地址或 pnpm GitHub spec：
    `https://github.com/anki7peng-png/dsh-lxhzj-skins`
+   或 `github:anki7peng-png/dsh-lxhzj-skins`
+   - 不要只输入 `dsh-lxhzj-skins`：安装器会把它当作 npm 包名，不会去 GitHub 查找。
 3. 安装完成后重启 DSH。
 4. 插件页 →「罗小黑系列皮肤」→ 选择「小黑·森林」。
 

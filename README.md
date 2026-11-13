@@ -43,7 +43,10 @@ test/                                  # 资源路由与客户端映射测试
 
 仓库（public）：<https://github.com/anki7peng-png/dsh-lxhzj-skins>
 
-- **DSH 插件页**：「插件」→「添加插件」→ 输入上面的 GitHub 地址 → 重启 DSH → 在「罗小黑系列皮肤」中选择主题。
+- **DSH 插件页**：「插件」→「添加插件」→ 输入下面的 GitHub 地址或 pnpm GitHub spec → 重启 DSH → 在「罗小黑系列皮肤」中选择主题。
+  - `https://github.com/anki7peng-png/dsh-lxhzj-skins`
+  - `github:anki7peng-png/dsh-lxhzj-skins`
+  - 只输入 `dsh-lxhzj-skins` 会被当作 npm 包名，不会去 GitHub 查找；当前没有发布到 npm，会安装失败。
 - **Windows**：见 [`docs/Windows安装.md`](docs/Windows安装.md)（public 仓库，不需要 `gh auth login`）。
 - **本地开发**：`npm install && npm test`。
 - 仓库已设为 public，内含官方角色裁切与影视帧派生素材；公开仅用于项目所有者跨设备试用与备份，不构成对第三方的商用/再分发授权。
