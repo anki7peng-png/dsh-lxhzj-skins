@@ -9,7 +9,7 @@ async function mount(themes, initial = 'default') {
   const attrs = new Map(), effects = [], subscribers = new Set(), styles = [], components = {}
   let plugin, preference = 'system', formState = { status: 'ready', writable: true, value: { selectedSkin: initial } }
   const overrides = new Map()
-  const body = { hasAttribute: key => attrs.has(key), getAttribute: key => attrs.get(key) ?? null, setAttribute: (key, value) => attrs.set(key, value), removeAttribute: key => attrs.delete(key) }
+  const body = { hasAttribute: key => attrs.has(key), getAttribute: key => attrs.get(key) ?? null, setAttribute: (key, value) => attrs.set(key, value), removeAttribute: key => attrs.delete(key), style: {}, append() {}, remove() {} }
   const React = {
     useSyncExternalStore: (_subscribe, snapshot) => snapshot(),
     useRef: value => ({ current: value }),
@@ -31,7 +31,7 @@ async function mount(themes, initial = 'default') {
       overrideTokens(source, tokens) { overrides.set(source, tokens); return () => overrides.delete(source) }
     }
   }
-  const sandbox = { window: { __ModuleLoader__: { load(value) { plugin = value.factory(() => React) } } }, document: { body, head: { append(value) { styles.push(value) } }, createElement: () => ({ setAttribute() {}, removed: false, remove() { this.removed = true } }) }, fetch: async () => ({ ok: true, json: async () => ({ themes }) }), AbortController, console }
+  const sandbox = { window: { __ModuleLoader__: { load(value) { plugin = value.factory(() => React) } } }, document: { body, head: { append(value) { styles.push(value) } }, createElement: type => ({ tagName: String(type).toUpperCase(), className: '', style: {}, setAttribute() {}, addEventListener() {}, append() {}, remove() { this.removed = true } }) }, fetch: async () => ({ ok: true, json: async () => ({ themes }) }), AbortController, console }
   vm.runInNewContext(source, sandbox)
   plugin.apply(ctx)
   await new Promise(resolve => setImmediate(resolve))
@@ -43,7 +43,7 @@ async function mount(themes, initial = 'default') {
   }
 }
 
-const forest = { id: 'forest', name: '森林', available: true, background: 'forest.png', backgroundWindows: 'forest-win.png', theme: null, character: { working: 'work.png', waiting: 'wait.png', idle: 'idle.png', unknown: null }, gaze: { working: 'work-gaze.png', waiting: 'wait-gaze.png', idle: 'idle-gaze.png', unknown: null } }
+const forest = { id: 'forest', name: '森林', available: true, background: 'forest.png', backgroundAnimated: 'forest-anim.webp', backgroundWindows: 'forest-win.png', theme: null, character: { working: 'work.png', waiting: 'wait.png', idle: 'idle.png', unknown: null }, gaze: { working: 'work-gaze.png', waiting: 'wait-gaze.png', idle: 'idle-gaze.png', unknown: null } }
 const mountain = { id: 'mountain', name: '山水', available: true, background: 'mountain.png', theme: { colorScheme: 'dark', tokens: { '--dsw-alias-bg-base': 'transparent' } }, character: {} }
 const future = { id: 'future', name: '待制作', available: false, background: null, theme: null, character: {} }
 const buttons = instance => instance.components['plugins.bundle.config']().children[5].children
