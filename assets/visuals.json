@@ -5,6 +5,7 @@
       "name": "小黑·森林",
       "tagline": "月下巡林 · 松风与流萤",
       "accent": "#93e7b3",
+      "heroLogo": "hero-logo.webp",
       "background": "background.webp",
       "character": {
         "working": "working.webp",
@@ -104,6 +105,7 @@
       "id": "wuxian-landscape",
       "name": "无限·山水",
       "tagline": "待绘制",
+      "heroLogo": null,
       "theme": null,
       "background": null,
       "character": {}
@@ -112,6 +114,7 @@
       "id": "nezha-gaming",
       "name": "哪吒·电竞",
       "tagline": "待绘制",
+      "heroLogo": null,
       "theme": null,
       "background": null,
       "character": {}
@@ -120,6 +123,7 @@
       "id": "xiaobai-countryside",
       "name": "小白·乡村",
       "tagline": "待绘制",
+      "heroLogo": null,
       "theme": null,
       "background": null,
       "character": {}
@@ -128,6 +132,7 @@
       "id": "fengxi-forest",
       "name": "风息·森林",
       "tagline": "待绘制",
+      "heroLogo": null,
       "theme": null,
       "background": null,
       "character": {}
@@ -136,6 +141,7 @@
       "id": "longyou-hall",
       "name": "会馆·龙游",
       "tagline": "待绘制",
+      "heroLogo": null,
       "theme": null,
       "background": null,
       "character": {}
