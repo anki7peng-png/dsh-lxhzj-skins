@@ -12,7 +12,7 @@ function response() {
 
 test('validates theme ids, configured image names and semantic colors', () => {
   const normalized = normalizeVisuals({ themes: [
-    { id: 'forest', name: '森林', tagline: ' 月下巡林 ', accent: '#93E7B3', theme: { colorScheme: 'dark', tokens: { '--dsw-alias-bg-base': '#123', '--other': 'red' } }, background: '../secret.png', backgroundAnimated: 'anim.webp', backgroundWindows: 'win.png', heroLogo: '../secret.png', character: { working: 'working.png', idle: 'https://elsewhere/x.png' }, gaze: { working: 'gaze.png', unknown: '../bad.png' } },
+    { id: 'forest', name: '森林', tagline: ' 月下巡林 ', accent: '#93E7B3', theme: { colorScheme: 'dark', tokens: { '--dsw-alias-bg-base': '#123', '--other': 'red' } }, background: '../secret.png', backgroundAnimated: 'anim.webp', backgroundWindows: 'win.png', heroLogo: '../secret.png', notificationIcon: '../secret.png', character: { working: 'working.png', idle: 'https://elsewhere/x.png' }, gaze: { working: 'gaze.png', unknown: '../bad.png' } },
     { id: '../bad', name: 'bad' }, { id: 'forest', name: 'duplicate' }
   ] })
   assert.equal(normalized.themes.length, 1)
@@ -21,6 +21,7 @@ test('validates theme ids, configured image names and semantic colors', () => {
   assert.equal(skin.backgroundWindows, 'win.png')
   assert.equal(skin.backgroundAnimated, 'anim.webp')
   assert.equal(skin.heroLogo, null)
+  assert.equal(skin.notificationIcon, null)
   assert.equal(skin.character.working, 'working.png')
   assert.equal(skin.character.idle, null)
   assert.deepEqual(skin.theme.tokens, { '--dsw-alias-bg-base': '#123' })
@@ -40,6 +41,7 @@ test('ships and serves the complete 小黑·森林 visual set', async () => {
   const forest = visuals.themes.find(theme => theme.id === 'xiaohei-forest')
   assert.equal(forest.available, true)
   assert.equal(forest.heroLogo, 'hero-logo.webp')
+  assert.equal(forest.notificationIcon, 'notification-heixiu.png')
   assert.equal(forest.theme.colorScheme, 'dark')
   assert.ok(Object.keys(forest.theme.tokens).length >= 30)
   assert.equal(forest.character.working, 'working.webp')
@@ -54,6 +56,7 @@ test('ships and serves the complete 小黑·森林 visual set', async () => {
   assert.ok((await stat(new URL('../assets/xiaohei-forest/background-win.webp', import.meta.url))).size > 100_000)
   assert.ok((await stat(new URL('../assets/xiaohei-forest/background-animated.webp', import.meta.url))).size > 100_000)
   assert.ok((await stat(new URL('../assets/xiaohei-forest/hero-logo.webp', import.meta.url))).size > 100_000)
+  assert.ok((await stat(new URL('../assets/xiaohei-forest/notification-heixiu.png', import.meta.url))).size > 10_000)
   for (const state of ['working', 'waiting', 'idle', 'unknown']) {
     assert.ok((await stat(new URL(`../assets/xiaohei-forest/${state}.webp`, import.meta.url))).size > 10_000)
   }
@@ -78,6 +81,14 @@ test('ships and serves the complete 小黑·森林 visual set', async () => {
   await handler({ method: 'GET', url: '/skin-assets/luoxiaohei/xiaohei-forest/background-animated.webp' }, anim)
   assert.equal(anim.status, 200)
   assert.equal(anim.headers['Content-Type'], 'image/webp')
+  const notice = response()
+  await handler({ method: 'GET', url: '/skin-assets/luoxiaohei/xiaohei-forest/notification-heixiu.png' }, notice)
+  assert.equal(notice.status, 200)
+  assert.equal(notice.headers['Content-Type'], 'image/png')
+  const iconBytes = await readFile(new URL('../assets/xiaohei-forest/notification-heixiu.png', import.meta.url))
+  assert.equal(iconBytes.readUInt32BE(16), 512)
+  assert.equal(iconBytes.readUInt32BE(20), 512)
+  assert.equal(iconBytes[25], 6) // RGBA PNG colour type
   const gaze = response()
   await handler({ method: 'GET', url: '/skin-assets/luoxiaohei/xiaohei-forest/working-gaze.webp' }, gaze)
   assert.equal(gaze.status, 200)
@@ -90,11 +101,12 @@ test('serves only each theme’s configured files and respects GET and HEAD', as
     await mkdir(join(dir, 'forest'))
     await mkdir(join(dir, 'mountain'))
     await writeFile(join(dir, 'visuals.json'), JSON.stringify({ themes: [
-      { id: 'forest', name: '森林', background: 'background.png', heroLogo: 'logo.webp', character: { working: 'missing.png' } },
+      { id: 'forest', name: '森林', background: 'background.png', heroLogo: 'logo.webp', notificationIcon: 'notice.png', character: { working: 'missing.png' } },
       { id: 'mountain', name: '山水', background: null }
     ] }))
     await writeFile(join(dir, 'forest', 'background.png'), 'image bytes')
     await writeFile(join(dir, 'forest', 'logo.webp'), 'logo bytes')
+    await writeFile(join(dir, 'forest', 'notice.png'), 'notification icon')
     await writeFile(join(dir, 'forest', 'private.png'), 'not exposed')
     await writeFile(join(dir, 'mountain', 'background.png'), 'not configured here')
     const handler = createAssetHandler(pathToFileURL(`${dir}/`))
@@ -104,6 +116,8 @@ test('serves only each theme’s configured files and respects GET and HEAD', as
     assert.equal(res.status, 200); assert.equal(res.body, undefined)
     res = response(); await handler({ method: 'GET', url: '/skin-assets/luoxiaohei/forest/logo.webp' }, res)
     assert.equal(res.status, 200); assert.equal(res.headers['Content-Type'], 'image/webp'); assert.equal(res.body.toString(), 'logo bytes')
+    res = response(); await handler({ method: 'GET', url: '/skin-assets/luoxiaohei/forest/notice.png' }, res)
+    assert.equal(res.status, 200); assert.equal(res.headers['Content-Type'], 'image/png'); assert.equal(res.body.toString(), 'notification icon')
     for (const path of ['forest/private.png', 'forest/missing.png', 'mountain/background.png', 'forest/../private.png']) {
       res = response(); await handler({ method: 'GET', url: `/skin-assets/luoxiaohei/${path}` }, res)
       assert.equal(res.status, 404)

@@ -3,3 +3,4 @@ node_modules/
 *.log
 *.tgz
 .artifacts/
+macos/Luoxiaohei Notify.app/

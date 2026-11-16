@@ -5,10 +5,10 @@ import vm from 'node:vm'
 
 const source = await readFile(new URL('../lib/client.js', import.meta.url), 'utf8')
 
-async function mount(themes, initial = 'default', { logoSlot = true, existingLogo, rejectLogo = false } = {}) {
-  const attrs = new Map(), effects = [], subscribers = new Set(), styles = [], components = {}
-  const logoName = 'conversation.hero.brand.mark', logoEntries = [], logoWaiters = new Set(), warnings = []
-  let logoDeclared = logoSlot
+async function mount(themes, initial = 'default', { logoSlot = true, settingsSlot = true, existingLogo, rejectLogo = false } = {}) {
+  const attrs = new Map(), effects = [], subscribers = new Set(), styles = [], components = {}, registrations = {}
+  const logoName = 'conversation.hero.brand.mark', logoEntries = [], logoWaiters = new Set(), settingsWaiters = new Set(), warnings = []
+  let logoDeclared = logoSlot, settingsDeclared = settingsSlot
   let plugin, preference = 'system', formState = { status: 'ready', writable: true, value: { selectedSkin: initial } }
   const overrides = new Map()
   const body = { hasAttribute: key => attrs.has(key), getAttribute: key => attrs.get(key) ?? null, setAttribute: (key, value) => attrs.set(key, value), removeAttribute: key => attrs.delete(key), style: {}, append() {}, remove() {} }
@@ -30,6 +30,16 @@ async function mount(themes, initial = 'default', { logoSlot = true, existingLog
   }
   const slots = {
     inject(slot, fn) {
+      if (slot === 'settings.section') {
+        let active
+        const waiter = { sync() {
+          if (settingsDeclared && !active) active = fn()
+          if (!settingsDeclared && active) { active(); active = undefined }
+        } }
+        settingsWaiters.add(waiter)
+        waiter.sync()
+        return () => { settingsWaiters.delete(waiter); active?.(); active = undefined }
+      }
       if (slot !== logoName) return fn()
       let active
       const waiter = {
@@ -60,7 +70,8 @@ async function mount(themes, initial = 'default', { logoSlot = true, existingLog
         }
       }
       components[options.name] = value
-      return () => { if (components[options.name] === value) delete components[options.name] }
+      registrations[options.name] = options
+      return () => { if (components[options.name] === value) { delete components[options.name]; delete registrations[options.name] } }
     }
   }
   if (existingLogo) slots.register({ name: logoName }, existingLogo)
@@ -79,11 +90,15 @@ async function mount(themes, initial = 'default', { logoSlot = true, existingLog
   plugin.apply(ctx)
   await new Promise(resolve => setImmediate(resolve))
   return {
-    components, attrs, styles, form, overrides, logoEntries, warnings,
+    components, registrations, attrs, styles, form, overrides, logoEntries, warnings,
     setLogoSlot(value) {
       logoDeclared = value
       for (const waiter of [...logoWaiters]) waiter.sync()
       if (!value) { logoEntries.splice(0); electLogo() }
+    },
+    setSettingsSlot(value) {
+      settingsDeclared = value
+      for (const waiter of [...settingsWaiters]) waiter.sync()
     },
     get preference() { return preference },
     setPreference(value) { preference = value },
@@ -101,6 +116,38 @@ const countPupils = node => Array.isArray(node)
   ? node.reduce((sum, child) => sum + countPupils(child), 0)
   : (node?.props?.className?.includes('luoxiaohei-pupil') ? 1 : 0) + (node?.children ?? []).reduce((sum, child) => sum + countPupils(child), 0)
 const imageOf = node => { const walk = value => { if (!value) return null; if (value.type === 'img') return value.props; for (const child of value.children ?? []) { const found = walk(child); if (found) return found } return null }; return walk(node) }
+
+test('registers the shared skin and notification page in DSH settings', async () => {
+  const instance = await mount([forest, mountain])
+  const entry = instance.registrations['settings.section']
+  assert.equal(entry.id, 'luoxiaohei-skins')
+  assert.equal(entry.order, 25)
+  assert.equal(entry.label(), '罗小黑皮肤与管理')
+  assert.equal(instance.components['settings.section'], instance.components['plugins.bundle.config'])
+  const settings = () => instance.components['settings.section']()
+  assert.equal(settings().children[6].children[0].children[0], '通知管理')
+  settings().children[5].children[1].props.onClick()
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(instance.form.getSnapshot().value.selectedSkin, 'forest')
+  assert.equal(buttons(instance)[1].props['aria-checked'], true)
+  instance.dispose()
+  assert.equal(instance.components['settings.section'], undefined)
+})
+
+test('keeps existing controls usable until the settings slot becomes available', async () => {
+  const instance = await mount([forest], 'default', { settingsSlot: false })
+  assert.equal(instance.components['settings.section'], undefined)
+  buttons(instance)[1].props.onClick()
+  await new Promise(resolve => setImmediate(resolve))
+  assert.equal(instance.form.getSnapshot().value.selectedSkin, 'forest')
+  instance.setSettingsSlot(true)
+  assert.equal(instance.components['settings.section']().children[5].children[1].props['aria-checked'], true)
+  instance.setSettingsSlot(false)
+  assert.equal(instance.components['settings.section'], undefined)
+  instance.dispose()
+  instance.setSettingsSlot(true)
+  assert.equal(instance.components['settings.section'], undefined)
+})
 
 test('selects independent skins through the DSH form and restores the default', async () => {
   const instance = await mount([forest, mountain, future])

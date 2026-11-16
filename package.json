@@ -15,6 +15,7 @@
   "files": [
     "lib",
     "assets",
+    "macos",
     "locale",
     "docs",
     "skin.json",
