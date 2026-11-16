@@ -67,7 +67,7 @@ test/                                  # 资源路由与客户端映射测试
 
 - 在「设置 → 罗小黑皮肤与管理」中开启系统通知并允许系统授权；可单独关闭三类提醒。本轮结束不代表任务一定成功。通知依赖 DSH 页面及插件运行，不发送到手机或外部平台。
 - Web 与 Windows 客户端使用 `assets/visuals.json` 的 `notificationIcon`。小黑·森林已配置 `notification-heixiu.png`：透明底小黑球嘿咻：黑色圆身、两枚大眼，外围带一圈很淡的浅绿米色光晕；无背景、耳朵、鼻子或长尾；未配置的皮肤使用系统默认图标。最终显示以系统通知样式为准。
-- macOS 桌面端需在插件目录执行 `bash macos/build.sh` 编译本地通知助手（需要 Xcode Command Line Tools），然后在管理页开启通知并允许 macOS 通知。默认使用随仓库提供的 `macos/notification-heixiu.icns` 小嘿咻图标；可用 `bash macos/build.sh /绝对路径/自定义.icns` 覆盖。助手已经存在时请先自行备份并移走后再重建。该图标属于助手应用，不能随每条通知自动切换。
+- macOS 桌面端开启通知时，若已编译本地助手则优先使用助手，否则使用 DSH 的通知通道，无需手动编译。部分环境若没有显示通知，可选在插件目录执行 `bash macos/build.sh` 编译助手（需要 Xcode Command Line Tools），并允许助手发送通知。助手默认使用 `macos/notification-heixiu.icns` 图标，也可用 `bash macos/build.sh /绝对路径/自定义.icns` 指定；重建前需先备份并移走现有助手。助手图标不能随每条通知自动切换。
 - 系统通知骨架尚需在 Windows 和 macOS 桌面端实机验收；系统可能因通知权限或专注模式不显示通知。
 
 ## 验证

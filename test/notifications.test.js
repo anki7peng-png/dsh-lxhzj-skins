@@ -19,9 +19,9 @@ function store(initial) {
   }
 }
 
-async function boot() {
+async function boot({ macDesktop = false, macHelper = false, macPostError = null } = {}) {
   let plugin, config = { selectedSkin: 'forest', notificationsEnabled: false }
-  const effects = [], components = {}, notices = [], timers = new Map(), intervals = new Map(), formListeners = new Set()
+  const effects = [], components = {}, notices = [], macRequests = [], timers = new Map(), intervals = new Map(), formListeners = new Set()
   let nextTimer = 1
   const schedule = (fn, ms) => { const id = nextTimer++; timers.set(id, { fn, ms }); return id }
   const sessionStatus = store(new Map())
@@ -52,27 +52,92 @@ async function boot() {
     effect(fn) { effects.push(fn()) }
   }
   const window = {
-    location: { protocol: 'http:', href: 'http://127.0.0.1:3080/' },
+    location: macDesktop ? { protocol: 'dsh-app:', href: 'dsh-app://app/' } : { protocol: 'http:', href: 'http://127.0.0.1:3080/' },
     __ModuleLoader__: { load(value) { plugin = value.factory(() => React) } },
     setInterval(fn) { const id = nextTimer++; intervals.set(id, fn); return id },
     clearInterval(id) { intervals.delete(id) }, focus() {}
   }
   const sandbox = {
-    window, Notification, URL, AbortController, console, navigator: { userAgent: 'Windows' },
+    window, Notification, URL, AbortController, console, navigator: { userAgent: macDesktop ? 'Macintosh; Intel Mac OS X' : 'Windows' },
     setTimeout: schedule, clearTimeout: id => timers.delete(id),
     document: { body, head: { append() {} }, createElement: () => ({ setAttribute() {}, addEventListener() {}, remove() {} }), querySelectorAll: () => [] },
-    fetch: async () => ({ ok: true, json: async () => ({ themes: [{ id: 'forest', name: '森林', available: true, theme: null, character: {}, gaze: {}, notificationIcon: 'notification-heixiu.png' }] }) })
+    fetch: async (url, options = {}) => {
+      if (url === '/__luoxiaohei-skins/notification') {
+        macRequests.push({ method: options.method || 'GET', body: options.body })
+        if (options.method === 'POST') return { ok: !macPostError, json: async () => macPostError ? { ok: false, reason: macPostError } : { ok: true } }
+        return { ok: true, json: async () => ({ ok: true, available: macHelper }) }
+      }
+      return { ok: true, json: async () => ({ themes: [{ id: 'forest', name: '森林', available: true, theme: null, character: {}, gaze: {}, notificationIcon: 'notification-heixiu.png' }] }) }
+    }
   }
   vm.runInNewContext(source, sandbox)
   plugin.apply(ctx)
   await new Promise(resolve => setImmediate(resolve))
   const controls = () => components['settings.section']().children[6]
   const flush = () => { for (const [id, timer] of [...timers]) { timers.delete(id); timer.fn() } }
-  return { notices, Notification, form, controls, view: () => components['settings.section'](), sessionStatus, list, face, flush, timers, intervals, config: () => config, dispose: () => effects.reverse().forEach(fn => fn?.()) }
+  return { notices, macRequests, Notification, form, controls, view: () => components['settings.section'](), sessionStatus, list, face, flush, timers, intervals, config: () => config, dispose: () => effects.reverse().forEach(fn => fn?.()) }
 }
 
 const status = (running, pendingInteraction = null, completionUnread = false) => ({ running, pendingInteraction, completionUnread })
 const next = () => new Promise(resolve => setImmediate(resolve))
+
+test('macOS desktop works through the DSH notification channel when no helper is built', async () => {
+  const h = await boot({ macDesktop: true })
+  assert.doesNotMatch(JSON.stringify(h.view()), /需要先编译/)
+  h.controls().children[2].props.onClick()
+  await next()
+  assert.equal(h.config().notificationsEnabled, true)
+  assert.equal(h.notices[0].title, '小黑 · 通知测试')
+  assert.equal(h.notices[0].options.icon, 'dsh-app://app/skin-assets/luoxiaohei/forest/notification-heixiu.png')
+  assert.equal(h.macRequests.filter(request => request.method === 'POST').length, 0)
+  h.sessionStatus.set(new Map([['s1', status(true, { kind: 'question', key: 'mac-q1' })]]))
+  await next()
+  assert.equal(h.notices[1].title, '小黑 · 有问题需要回答')
+  h.dispose()
+})
+
+test('macOS desktop keeps using the optional native helper when it is available', async () => {
+  const h = await boot({ macDesktop: true, macHelper: true })
+  h.controls().children[2].props.onClick()
+  await next()
+  assert.equal(h.config().notificationsEnabled, true)
+  assert.equal(h.notices.length, 0)
+  assert.deepEqual(h.macRequests.filter(request => request.method === 'POST').map(request => JSON.parse(request.body).kind), ['test'])
+  h.sessionStatus.set(new Map([['s1', status(true, { kind: 'approval', key: 'mac-a1' })]]))
+  await next()
+  assert.deepEqual(h.macRequests.filter(request => request.method === 'POST').map(request => JSON.parse(request.body).kind), ['test', 'approval'])
+  h.dispose()
+})
+
+test('macOS desktop falls back if the helper disappears after it was detected', async () => {
+  const h = await boot({ macDesktop: true, macHelper: true, macPostError: 'helper-unavailable' })
+  h.controls().children[2].props.onClick()
+  await next()
+  assert.equal(h.config().notificationsEnabled, true)
+  assert.equal(h.notices[0].title, '小黑 · 通知测试')
+  h.dispose()
+})
+
+test('macOS notification permission is requested during the enable gesture', async () => {
+  const h = await boot({ macDesktop: true })
+  let requests = 0
+  h.Notification.requestPermission = () => { requests += 1; h.Notification.permission = 'granted'; return Promise.resolve('granted') }
+  h.controls().children[2].props.onClick()
+  assert.equal(requests, 1)
+  await next()
+  assert.equal(h.config().notificationsEnabled, true)
+  h.dispose()
+})
+
+test('macOS native authorization failure is shown instead of falsely enabling notifications', async () => {
+  const h = await boot({ macDesktop: true, macHelper: true, macPostError: 'not-authorized' })
+  h.controls().children[2].props.onClick()
+  await next()
+  assert.equal(h.config().notificationsEnabled, false)
+  assert.match(h.view().children[4].children[0], /未获授权/)
+  assert.equal(h.notices.length, 0)
+  h.dispose()
+})
 
 test('local notifications require opt-in and cover three kinds with deduplication, controls and cleanup', async () => {
   const h = await boot()
