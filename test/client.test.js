@@ -5,7 +5,7 @@ import vm from 'node:vm'
 
 const source = await readFile(new URL('../lib/client.js', import.meta.url), 'utf8')
 
-async function mount(themes, initial = 'default', { logoSlot = true, settingsSlot = true, existingLogo, rejectLogo = false } = {}) {
+async function mount(themes, initial = 'default', { logoSlot = true, settingsSlot = true, existingLogo, rejectLogo = false, windows = false } = {}) {
   const attrs = new Map(), effects = [], subscribers = new Set(), styles = [], components = {}, registrations = {}
   const logoName = 'conversation.hero.brand.mark', logoEntries = [], logoWaiters = new Set(), settingsWaiters = new Set(), warnings = []
   let logoDeclared = logoSlot, settingsDeclared = settingsSlot
@@ -85,7 +85,7 @@ async function mount(themes, initial = 'default', { logoSlot = true, settingsSlo
       overrideTokens(source, tokens) { overrides.set(source, tokens); return () => overrides.delete(source) }
     }
   }
-  const sandbox = { window: { __ModuleLoader__: { load(value) { plugin = value.factory(() => React) } } }, document: { body, head: { append(value) { styles.push(value) } }, createElement: type => ({ tagName: String(type).toUpperCase(), className: '', style: {}, setAttribute() {}, addEventListener() {}, append() {}, remove() { this.removed = true } }) }, fetch: async () => ({ ok: true, json: async () => ({ themes }) }), AbortController, console: { ...console, warn: (...args) => warnings.push(args) } }
+  const sandbox = { window: { __ModuleLoader__: { load(value) { plugin = value.factory(() => React) } } }, navigator: windows ? { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', platform: 'Win32' } : { userAgent: 'Macintosh', platform: 'MacIntel' }, document: { body, head: { append(value) { styles.push(value) } }, createElement: type => ({ tagName: String(type).toUpperCase(), className: '', style: {}, setAttribute() {}, addEventListener() {}, append() {}, remove() { this.removed = true } }) }, fetch: async () => ({ ok: true, json: async () => ({ themes }) }), AbortController, console: { ...console, warn: (...args) => warnings.push(args) } }
   vm.runInNewContext(source, sandbox)
   plugin.apply(ctx)
   await new Promise(resolve => setImmediate(resolve))
@@ -256,6 +256,14 @@ test('keeps the previous logo when no artwork is configured or an image fails to
   assert.equal(broken.logoEntries.length, 1)
   assert.equal(broken.attrs.get('data-dsh-luoxiaohei-skin'), 'forest')
   broken.dispose()
+})
+
+test('does not append a version marker to the Windows character label', async () => {
+  const instance = await mount([forest], 'forest', { windows: true })
+  const render = instance.components['conversation.composer.dock']({ sessionId: 'one', useSessionStatus: select => select(new Map([['one', { running: false }]])) })
+  assert.equal(render.props.title, '小黑 · 小憩')
+  assert.equal(render.props['aria-label'], '小黑：小憩')
+  instance.dispose()
 })
 
 test('maps the active session status to the selected skin character', async () => {
