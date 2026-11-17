@@ -108,6 +108,15 @@ test('reports a failed update and successful rollback accurately', async () => {
   instance.dispose()
 })
 
+test('explains when update metadata was found but GitHub download is unreachable', async () => {
+  const instance = await mount({ response: { ok: true, value: { result: { application: 'failed', failedAt: 'spec-host' } } } })
+  await check(instance)
+  instance.render(own).children[0].props.onClick()
+  await flush()
+  assert.match(instance.notices[0].children[0].textContent, /无法连接 GitHub 下载/)
+  instance.dispose()
+})
+
 test('does not offer an update when GitHub main is the same version or older', async () => {
   for (const version of ['0.1.17', '0.1.16']) {
     const instance = await mount({ latest: { version, commit: shaNew } })
