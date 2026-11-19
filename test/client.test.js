@@ -144,6 +144,11 @@ test('shows one full-body cover in theme cards instead of four state thumbnails'
   assert.equal(covers[0].src, '/skin-assets/luoxiaohei/forest/idle.png')
   assert.equal(covers[0].alt, '森林')
   assert.equal(covers[0].loading, 'lazy')
+  assert.match(cards[1].props.style.background, /forest\.png/)
+  assert.equal(cards[1].props.style.backgroundSize, 'cover')
+  assert.equal(cards[1].props.style.aspectRatio, '277 / 120')
+  assert.equal(cards[1].props.style.minHeight, '108px')
+  assert.equal(cards[1].props.style.maxHeight, '150px')
   instance.dispose()
 })
 
