@@ -116,6 +116,7 @@ const countPupils = node => Array.isArray(node)
   ? node.reduce((sum, child) => sum + countPupils(child), 0)
   : (node?.props?.className?.includes('luoxiaohei-pupil') ? 1 : 0) + (node?.children ?? []).reduce((sum, child) => sum + countPupils(child), 0)
 const imageOf = node => { const walk = value => { if (!value) return null; if (value.type === 'img') return value.props; for (const child of value.children ?? []) { const found = walk(child); if (found) return found } return null }; return walk(node) }
+const imagesOf = node => { const out = []; const walk = value => { if (!value) return; if (Array.isArray(value)) { for (const child of value) walk(child); return } if (value.type === 'img') out.push(value.props); for (const child of value.children ?? []) walk(child) }; walk(node); return out }
 
 test('registers the shared skin and notification page in DSH settings', async () => {
   const instance = await mount([forest, mountain])
@@ -132,6 +133,18 @@ test('registers the shared skin and notification page in DSH settings', async ()
   assert.equal(buttons(instance)[1].props['aria-checked'], true)
   instance.dispose()
   assert.equal(instance.components['settings.section'], undefined)
+})
+
+test('shows one full-body cover in theme cards instead of four state thumbnails', async () => {
+  const instance = await mount([forest], 'forest')
+  const cards = buttons(instance)
+  assert.equal(imagesOf(cards[0]).length, 0)
+  const covers = imagesOf(cards[1])
+  assert.equal(covers.length, 1)
+  assert.equal(covers[0].src, '/skin-assets/luoxiaohei/forest/idle.png')
+  assert.equal(covers[0].alt, '森林')
+  assert.equal(covers[0].loading, 'lazy')
+  instance.dispose()
 })
 
 test('keeps existing controls usable until the settings slot becomes available', async () => {
